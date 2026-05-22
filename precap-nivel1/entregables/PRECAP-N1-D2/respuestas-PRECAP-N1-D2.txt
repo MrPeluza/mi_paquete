@@ -1,0 +1,58 @@
+FEEDBACK video:
+
+1. ¿La diferencia entre imagen y contenedor quedó clara? Si no — ¿qué parte fue confusa?
+Si, esta clara la diferencia entre imagen y contenedor.
+
+2. ¿docker run hello-world funcionó sin errores? Si no — ¿qué error apareció?
+Si, todo funciona correctamente.
+
+3. ¿Puedes explicar por qué Docker consume menos recursos que una VM sin mirar apuntes?
+Docker elimina la redundancia de tener múltiples sistemas operativos haciendo lo mismo, permitiéndote aprovechar al máximo el hardware de tu servidor o computadora.
+
+
+FEEDBACK bloque A:
+
+1. ¿Entendiste la diferencia entre docker ps y docker ps -a en la práctica?
+Si, Docker ps solo muestra los contenedores activos, mientras Docker ps -a muestra todos los contenedores ya estén activos o no.
+
+2. ¿El exec -it funcionó? Si no — ¿qué error apareció exactamente?
+Si funciona correctamente.
+
+3. ¿Las predicciones coincidieron con lo real? ¿Cuál fue la más sorprendente?
+Si, las predicciones concuerdan con lo realizado en el bloque A.
+
+
+FEEDBACK bloque B:
+
+1. ¿El ping entre contenedores funcionó? Si no — ¿qué error apareció?
+Si, se envió 3 peticiones y las 3 fueron recibidas.
+
+2. ¿Los datos del volumen persistieron después de eliminar el contenedor? SÍ / NO
+No, muestra un error donde menciona que el contenedor no existe.
+
+3. ¿Las predicciones sobre puertos y volúmenes coincidieron con lo real?
+Si, las predicciones concuerdan con lo realizado en el bloque B.
+
+
+Reflexión final:
+
+¿Por qué OpenClaw y Ollama deben estar en la misma red Docker?
+Para que puedan comunicarse entre sí utilizando el DNS interno de Docker. Al estar en la misma red, OpenClaw puede localizar a Ollama simplemente usando su nombre de contenedor como dirección, permitiendo el flujo de datos sin configuraciones complejas.
+
+¿Qué pasa si no mapeas puertos al levantar OpenClaw?
+El contenedor funcionará internamente, pero no podrás acceder a él desde tu navegador o desde el equipo host.
+
+¿Por qué los datos de configuración de OpenClaw van en un volumen y no en el contenedor?
+Por la persistencia de datos. Los contenedores son temporales, si borras el contenedor para actualizarlo, toda la información guardada en su interior se pierde.
+
+¿Cuál fue el comando del día que más vas a usar en los Días 5-6?
+La verificación de los contenedores (Docker ps)
+
+¿Qué fue lo más confuso del día?
+La persistencia de los archivos.
+
+¿Puedes explicar imagen vs contenedor sin mirar apuntes? SÍ / NO / PARCIAL
+Si.
+
+Calificación general de la actividad (1-5):
+5, todo esta bien explicado y es comprensible.

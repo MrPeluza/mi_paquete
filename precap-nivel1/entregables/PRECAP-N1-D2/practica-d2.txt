@@ -1,0 +1,308 @@
+PREDICCION BLOQUE A:
+
+¿Qué pasa si haces docker run nginx dos veces seguidas sin --name?
+Se crean dos contenedores independientes. Aunque ambos utilicen la misma imagen de Nginx, cada uno tendrá un ID único y un nombre aleatorio distinto.
+
+Si eliminas un contenedor con docker rm, ¿la imagen nginx sigue en tu máquina?
+Sí, la imagen permanece intacta.
+
+¿Puedes entrar a un contenedor que está detenido con docker exec -it?
+No. El comando docker exec sirve para ejecutar un proceso nuevo dentro de un contenedor que ya está en ejecución. Si el contenedor está detenido, no hay un entorno activo donde correr ese comando.
+
+
+BLOQUE A:
+
+1-
+Comando:
+docker --version && docker info | head -10
+Resultado:
+Docker version 29.4.1, build 055a478
+Client:
+ Version:    29.4.1
+ Context:    default
+ Debug Mode: false
+ Plugins:
+  agent: Docker AI Agent Runner (Docker Inc.)
+    Version:  v1.44.0
+    Path:     /usr/local/lib/docker/cli-plugins/docker-agent
+  ai: Docker AI Agent - Ask Gordon (Docker Inc.)
+    Version:  v1.20.2
+
+2-
+Comando:
+docker run hello-world
+Resultado:
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+4f55086f7dd0: Pull complete
+d5e71e642bf5: Download complete
+Digest: sha256:f9078146db2e05e794366b1bfe584a14ea6317f44027d10ef7dad65279026885
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+3-
+Comando:
+docker ps
+Resultado:
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+4-
+Comando:
+docker ps -a
+Resultado:
+CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS                            PORTS                        NAMES
+3f00fec34c6c   hello-world                        "/hello"                 2 minutes ago   Exited (0) 2 minutes ago                                       serene_turing
+a1262972f88f   ghcr.io/openclaw/openclaw:latest   "docker-entrypoint.s…"   13 days ago     Up 2 seconds (health: starting)   127.0.0.1:18789->18789/tcp   openclaw-main
+f8ab5cd73df7   ollama/ollama:latest               "/bin/ollama serve"      13 days ago     Up 2 seconds                      127.0.0.1:11434->11434/tcp   ollama-server
+
+5-
+Comando:
+docker images
+Resultado:
+                                                                     i Info →   U  In Use
+IMAGE                              ID             DISK USAGE   CONTENT SIZE   EXTRA
+alpine:latest                      5b10f432ef3d       13.1MB         3.95MB
+ghcr.io/openclaw/openclaw:latest   ed18856fd113        4.9GB         1.05GB    U
+hello-world:latest                 f9078146db2e       25.9kB         9.49kB    U
+nginx:latest                       a7a9f7e9f549        240MB         65.8MB
+ollama/ollama:latest               2038a264392a       10.1GB         3.77GB    U
+
+6-
+Comando:
+docker run -d --name mi-nginx nginx
+Resultado:
+a55db67fd166bc4c309a5a894519b30b4003738f75ccd9a496fa6a66dfe4205e
+
+7-
+Comando:
+docker ps
+Resultado:
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS     NAMES
+a55db67fd166   nginx     "/docker-entrypoint.…"   10 seconds ago   Up 10 seconds   80/tcp    mi-nginx
+
+8-
+Comando:
+docker logs mi-nginx
+Resultado:
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
+10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf
+/docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
+/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
+/docker-entrypoint.sh: Configuration complete; ready for start up
+2026/05/11 13:09:10 [notice] 1#1: using the "epoll" event method
+2026/05/11 13:09:10 [notice] 1#1: nginx/1.29.8
+2026/05/11 13:09:10 [notice] 1#1: built by gcc 14.2.0 (Debian 14.2.0-19)
+2026/05/11 13:09:10 [notice] 1#1: OS: Linux 6.6.87.2-microsoft-standard-WSL2
+2026/05/11 13:09:10 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2026/05/11 13:09:10 [notice] 1#1: start worker processes
+2026/05/11 13:09:10 [notice] 1#1: start worker process 30
+2026/05/11 13:09:10 [notice] 1#1: start worker process 31
+2026/05/11 13:09:10 [notice] 1#1: start worker process 32
+2026/05/11 13:09:10 [notice] 1#1: start worker process 33
+
+9-
+Comando:
+docker exec -it mi-nginx bash → ls /etc/nginx → exit
+Resultado:
+conf.d  fastcgi_params  mime.types  modules  nginx.conf  scgi_params  uwsgi_params
+
+10-
+Comando:
+docker stop mi-nginx && docker ps
+Resultado:
+mi-nginx
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+11-
+Comando:
+docker rm mi-nginx && docker ps -a
+Resultado:
+mi-nginx
+CONTAINER ID   IMAGE                              COMMAND                  CREATED         STATUS                       PORTS     NAMES
+3f00fec34c6c   hello-world                        "/hello"                 6 minutes ago   Exited (0) 6 minutes ago               serene_turing
+a1262972f88f   ghcr.io/openclaw/openclaw:latest   "docker-entrypoint.s…"   13 days ago     Exited (137) 3 minutes ago             openclaw-main
+f8ab5cd73df7   ollama/ollama:latest               "/bin/ollama serve"      13 days ago     Exited (0) 3 minutes ago               ollama-server
+
+12-
+Comando:
+docker rmi nginx (si no la necesitan más)
+Resultado:
+Untagged: nginx:latest
+Deleted: sha256:a7a9f7e9f549699206cd61c9d14c5434c7ed85e510e837211e0c2d24c9bdb9ac
+
+
+PREDICCIONES bloque B:
+¿Qué pasa si dos contenedores en redes Docker diferentes intentan hacer ping por nombre?
+El ping fallará. Por lo general, las redes en Docker están aisladas.
+
+Si eliminas el volumen con docker volume rm mientras el contenedor que lo usa está corriendo, ¿falla o borra?
+El comando fallará. Docker protege los datos activos y te mostrará un mensaje de error indicando que el volumen está en uso.
+
+¿Qué ocurre si mapeas el mismo puerto del host dos veces? Ej: -p 8080:80 en dos contenedores distintos.
+El segundo contenedor no iniciará. Un puerto del host solo puede ser escuchado por un proceso a la vez; si necesitas ambos, tendrías que mapear el segundo a un puerto distinto en el host.
+
+
+BLOQUE B:
+
+1-
+comando:
+docker network ls
+resultado:
+NETWORK ID     NAME                            DRIVER    SCOPE
+5de45dd185d4   bridge                          bridge    local
+034d877c9239   host                            host      local
+4b9330d95a0f   none                            null      local
+861f58378c8d   openclaw-ollama_secure_ia_net   bridge    local
+
+2-
+comando:
+docker network create mi-red
+resultado:
+657118d82a8e8287e5a8c8a1881602d66f7a90b7453ae9c61d06c17f6283f4c6
+
+3-
+comando:
+docker run -d --name servidor --network mi-red nginx
+resultado:
+Unable to find image 'nginx:latest' locally
+latest: Pulling from library/nginx
+8e9b53b630de: Pull complete
+6e9f32fdbd61: Pull complete
+57fb71246055: Pull complete
+38a7e44929f3: Pull complete
+382a36159731: Pull complete
+20d41cd6829d: Pull complete
+83742381311a: Pull complete
+94a543ead0f2: Download complete
+46ca9676efb5: Download complete
+Digest: sha256:1881968aff6f7cdcc4b888c00a11f4ce241ad7ec957e0cb4a9e19e93a3ff87ea
+Status: Downloaded newer image for nginx:latest
+97fdf0bb04c1703814800d1bca4bab7293c79559e696aaa5c0a7496214ba9196
+
+4-
+comando:
+docker run -d --name cliente --network mi-red alpine sleep 3600
+resultado:
+8d65e38f584fea1eac3a789524adb0f88dcda528aefd5973fd7fe43983d412ab
+
+5-
+comando:
+docker exec cliente ping servidor -c 3
+resultado:
+PING servidor (172.19.0.2): 56 data bytes
+64 bytes from 172.19.0.2: seq=0 ttl=64 time=0.213 ms
+64 bytes from 172.19.0.2: seq=1 ttl=64 time=0.066 ms
+64 bytes from 172.19.0.2: seq=2 ttl=64 time=0.065 ms
+
+--- servidor ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 0.065/0.114/0.213 ms
+
+6-
+comando:
+docker stop servidor cliente && docker rm servidor cliente
+resultado:
+servidor
+cliente
+servidor
+cliente
+
+7-
+comando:
+docker run -d --name nginx-pub -p 8080:80 nginx
+resultado:
+af78311a3f3a25bb033106c46698d1bd095def784384484665162425213f9995
+
+8-
+comando:
+Abrir navegador → http://localhost:8080
+resultado:
+Welcome to nginx!
+If you see this page, nginx is successfully installed and working. Further configuration is required for the web server, reverse proxy, API gateway, load balancer, content cache, or other features.
+
+For online documentation and support please refer to nginx.org.
+To engage with the community please visit community.nginx.org.
+For enterprise grade support, professional services, additional security features and capabilities please refer to f5.com/nginx.
+
+Thank you for using nginx.
+
+9-
+comando:
+docker stop nginx-pub && docker rm nginx-pub
+resultado:
+nginx-pub
+nginx-pub
+
+10-
+comando:
+docker volume create mi-volumen
+resultado:
+mi-volumen
+
+11-
+comando:
+docker run -d --name vol-test -v mi-volumen:/data alpine sleep 3600
+resultado:
+9cd42d1faa200816fab18d22e0fe20e6000f0b1a009a9956d83bcbbe62076e85
+
+12-
+comando:
+docker exec vol-test sh -c "echo OpenClaw > /data/prueba.txt"
+resultado:
+
+
+13-
+comando:
+docker exec vol-test cat /data/prueba.txt
+resultado:
+OpenClaw
+
+14-
+comando:
+docker stop vol-test && docker rm vol-test
+resultado:
+vol-test
+vol-test
+
+15-
+comando:
+docker run --rm -v mi-volumen:/data alpine cat /data/prueba.txt
+resultado:
+OpenClaw
+
+16-
+comando:
+docker volume ls
+resultado:
+DRIVER    VOLUME NAME
+local     mi-volumen
+
+17-
+comando:
+docker volume rm mi-volumen
+resultado:
+mi-volumen
